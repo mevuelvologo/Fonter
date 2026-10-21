@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creador de Fuentes</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>Creador de Fuentes</h1>
+  <div class="font-meta">
+    <label>Nombre de familia
+      <input id="familyName" type="text" value="MiFuente">
+    </label>
+    <span id="progressLabel">0 / 0 glifos</span>
+    <button id="verifyFont" class="btn">🔍 Verificar fuente</button>
+    <button id="exportOtf" class="btn primary">Descargar .OTF</button>
+    <button id="exportTtf" class="btn primary">Descargar .TTF</button>
+    <button id="exportWoff" class="btn primary">Descargar .WOFF</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="glyph-list" id="glyphList"></aside>
+
+  <main class="canvas-area">
+    <div class="toolbar">
+      <button class="btn tool-mode active" data-mode="pen">✏️ Pluma</button>
+      <button class="btn tool-mode" data-mode="select">➤ Selección (mover trazado)</button>
+      <button class="btn tool-mode" data-mode="node">◇ Nodo (mover punto)</button>
+      <span class="sep"></span>
+      <button id="closeContour" class="btn">Cerrar trazado</button>
+      <button id="undoPoint" class="btn">Deshacer punto</button>
+      <button id="deleteSelected" class="btn danger">Eliminar seleccionado</button>
+      <button id="clearGlyph" class="btn danger">Borrar glifo</button>
+      <span class="sep"></span>
+      <button id="pasteVector" class="btn">📋 Pegar vector</button>
+      <button id="toggleReference" class="btn">🔤 Letra de referencia</button>
+    </div>
+
+    <div class="char-nav">
+      <button id="prevChar" class="btn">← Anterior</button>
+      <span id="currentCharLabel">—</span>
+      <button id="nextChar" class="btn">Siguiente →</button>
+    </div>
+
+    <div id="transformPanel" class="transform-panel hidden">
+      <label>Escalar lo seleccionado
+        <input id="scaleSlider" type="range" min="20" max="300" value="100">
+        <span id="scaleValue">100%</span>
+      </label>
+    </div>
+
+    <div class="svg-wrap">
+      <svg id="grid" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div id="pasteBox" class="paste-box hidden">
+      <p>Pegá acá el vector: un <code>path</code> SVG (con líneas, curvas y/o arcos), el <code>&lt;svg&gt;</code> completo (con uno o varios <code>&lt;path&gt;</code>, se detectan todos solos), o una lista de puntos <code>x,y x,y ...</code>. No hace falta borrar nada del código de más.</p>
+      <p class="hint-small">Si el cuadro no se completó solo, es normal (el navegador a veces bloquea la lectura automática del portapapeles, sobre todo al abrir el archivo directamente sin servidor): pegalo vos con Ctrl+V / Cmd+V.</p>
+      <textarea id="pasteTextarea" rows="4"></textarea>
+
+      <p class="hint-small">Se pega usando la escala/posición de referencia guardada (así todos los caracteres del mismo dibujo quedan proporcionados entre sí). Si es el primer pegado, se calcula sola. Después de pegar, podés reescalar y reposicionar con la herramienta Selección. Si cambiaste de dibujo de origen y la referencia ya no corresponde, recalculala acá:</p>
+      <div class="paste-fit-row">
+        <button id="recalcPasteRef" class="btn">🔄 Recalcular referencia con este trazado</button>
+      </div>
+
+      <div class="paste-actions">
+        <button id="applyPaste" class="btn primary">Aplicar</button>
+        <button id="cancelPaste" class="btn">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="verifyPanel" class="paste-box hidden">
+      <h3>Estado de la fuente</h3>
+      <div id="verifyContent"></div>
+      <div class="paste-actions">
+        <button id="closeVerify" class="btn primary">Cerrar</button>
+      </div>
+    </div>
+
+    <p class="hint">Pluma: clic para agregar puntos; clic cerca del primero (o "Cerrar trazado") cierra la figura y ya podés empezar otro contorno (por ejemplo un agujero) con el próximo clic. Selección: clic sobre un trazado y arrastrá para moverlo — si viene de un mismo pegado con su calado, se mueven juntos; al seleccionar aparece el slider para escalarlo. Nodo: clic sobre un punto y arrastrá para ajustarlo. Las dos líneas punteadas (verde en 0 y azul en el ancho) son los manejadores de ancho: en modo Selección, arrastrá la verde para mover todo el glifo, o la azul para definir el ancho de avance (funciona también en el espacio). El progreso se guarda automáticamente en este navegador.</p>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@2.0.0/dist/opentype.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
